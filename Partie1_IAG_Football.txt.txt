@@ -1,0 +1,111 @@
+Mini-projet BD — PARTIE 1 — IAG
+Domaine : Football professionnel
+Étudiants : Meledj LASME Anis DALY
+
+============================================================
+1) PROMPT FINAL (cadre RICARDO) À UTILISER AVEC L’IAG
+============================================================
+R – Rôle
+Vous êtes un expert du football professionnel et tout ce qui en découle (gestion des clubs, des joueurs, des agents, des championnats, des saisons et des stades). 
+
+I – Instructions
+1. Etablis une liste claire et complète des règles de gestion des données de notre organisation.
+2. À partir de ces règles, fournis un dictionnaire de données « brutes » : un tableau avec les colonnes
+   (a) Signification de la donnée, (b) Type (texte, entier, date, booléen…), (c) Taille (nombre max de caractères ou de chiffres).
+3. Le dictionnaire doit contenir entre 25 et 35 lignes (pas de décisions de modélisation, pas de clés étrangères, pas de cardinalités).
+4. Reste strictement au périmètre : joueurs, équipes, agents, stades, saisons, championnats, statistiques de saison, distinctions/récompenses, adresses.
+5. Utilise des termes métiers compréhensibles par des non-informaticiens. Réponds en français.
+6. Ne fournis pas de code SQL ni de schéma ; uniquement règles de gestion + dictionnaire.
+
+C – Contexte
+Notre organisation est une plateforme d’observation et de diffusion d’informations sur le football professionnel. Elle collecte et regroupe les données publiques sur les joueurs (identité, nationalité, date de naissance, lieu de naissance), leurs agents (identité, nationalité, date de naissance, lieu de naissance), les équipes (nom, affiliation entre équipes A/B/réserves), les championnats et leurs pays, les saisons, les stades (nom, capacité, adresse). Des statistiques de performance regroupés par saison et par équipe (buts, passes décisives, matches joués) et des distinctions (ex. « Joueur de l’année »).
+L’objectif est d’obtenir la base textuelle (règles + dico de données) qui servira ensuite à faire un MCD MERISE.
+
+A – Contraintes additionnelles
+• Périmètre européen et standard du football pro. Pas d’informations sensibles ni de données privées inutiles.
+• Les valeurs numériques sont nulles ou positives quand elles ont un sens (ex. buts, passes, capacité).
+• Les saisons sont découpées par année « YYYY–YYYY ». 
+• Rester au niveau « besoins » : ne pas conjecture le modèle (ex. une adresse reste une donnée métier, pas une table).
+• Si une pratique diffère selon les pays, fournir la version la plus courante et signaler les variantes.
+
+R – Références
+• Exemple de site à l’inspiration : Transfermarkt (plateforme publique d’informations football).
+
+D – Rendement désiré (format attendu)
+1) « Règles de gestion » : liste à puces.
+2) « Dictionnaire de données » : tableau 3 colonnes (Signification | Type | Taille), 25 à 35 données.
+
+O – Objectifs
+Produire une base textuelle robuste (règles métier + dictionnaire de données) pour permettre la conception ultérieure (MCD, MLD/MPD) selon MERISE.
+
+============================================================
+2) RÈGLES DE GESTION (version livrable)
+============================================================
+• Un joueur a une identité civile (nom, prénom), une date de naissance, et une nationalité sportive.
+• Un joueur a un agent et un agent peut représenter plusieurs joueurs simultanément.
+• L’agent a également une identité (nom, prénom), une date de naissance, et une nationalité.
+• Chaque joueur et chaque agent disposent d’une adresse de naissance (optionnelle). L’adresse est composée d’un identifiant (numéro de rue), un numéro de rue, un nom de rue et une ville.
+• Une équipe a un nom officiel et peut être affiliée à une autre équipe (équipe « parente », exemple : équipe première - équipe réserve). Une équipe a au plus une seule équipe parente.
+• Les équipes sont inscrites à des championnats. Une équipe est inscrite au plus à un championnat. L’équipe championne est repérée par la saison concernée.
+• Un championnat est identifié par un ID, possède un nom et est rattaché à un pays.
+• Les saisons sont identifiées par un ID et possède une année du type « YYYY–YYYY ». Une équipe ne dispute au plus qu’un seul championnat par saison.
+• Pour chaque triplet (joueur, équipe, saison), on conserve des statistiques : nombre de buts, de passes décisives et de matches joués ; ces valeurs sont des entiers ≥ 0.
+• Un joueur peut changer d’équipe au cours de sa carrière (transfert). Ses statistiques sont donc décomposés par saison et par équipe.
+• Chaque équipe possède d’un stade. Un stade est identifié par un ID, défini par un nom, une capacité (nombre de places) et une adresse (optionnelle).
+• Une équipe peut changer de stade au fil des années. On conserve donc, le stade principal utilisé lorsqu’il est connu.
+• Des distinctions (récompenses individuelles) peuvent être attribuées à des joueurs dans le cadre d’un championnat (ex. Meilleur buteur). Un joueur peut recevoir plusieurs distinctions différentes.
+• Ces distinctions sont définies comme des textes libres. Elles doivent rester cohérentes.
+• Les noms (joueurs, agents, équipes, championnats, stades, villes) sont stockés en texte et acceptent les caractères accentués.
+• Les dates doivent être réelles et cohérentes (ex. date de naissance passée, saison valide).
+• Les capacités de stades, buts, passes et matches sont des entiers non négatifs ; la capacité doit être réaliste.
+• Les pays sont identifiés par leur nom officiel ; l’usage d’un code court (ex. ISO 3166-1 alpha-2) peut être ajouté au dictionnaire si besoin.
+• Les adresses et les informations personnelles sont facultatives quand elles ne sont pas publiques ; la base se limite à des informations non sensibles.
+• Les libellés de saisons sont uniformisés (ex. « 2023–2024 ») pour éviter les doublons dus à la variation d’écriture.
+• Un même nom d’équipe peut exister dans des pays différents ; on conserve le nom tel qu’officialisé par l’organisation sportive concernée.
+• Les affiliations d’équipes ne créent pas de cycles (une équipe réserve ne peut pas être ancêtre d’elle-même).
+• Toutes les valeurs textuelles sont stockées avec un encodage compatible UTF‑8 afin de prendre en charge les caractères internationaux.
+
+============================================================
+3) DICTIONNAIRE DE DONNÉES (version livrable)
+============================================================
+| Signification de la donnée                          | Type      | Taille |
+|-----------------------------------------------------|-----------|--------|
+| Identifiant joueur                                  | Entier    | 10     |
+| Nom du joueur                                       | Texte     | 50     |
+| Prénom du joueur                                    | Texte     | 50     |
+| Nationalité footballistique du joueur               | Texte     | 50     |
+| Date de naissance du joueur                         | Date      | 10     |
+| Numéro d’adresse du joueur                          | Entier    | 10     |
+| Identifiant agent                                   | Entier    | 10     |
+| Nom de l’agent                                      | Texte     | 50     |
+| Prénom de l’agent                                   | Texte     | 50     |
+| Nationalité de l’agent                              | Texte     | 50     |
+| Date de naissance de l’agent                        | Date      | 10     |
+| Numéro d’adresse de l’agent                         | Entier    | 10     |
+| Numéro d’adresse (identifiant d’adresse)            | Entier    | 10     |
+| Numéro de rue                                       | Entier    | 6      |
+| Libellé de voie / nom de rue                        | Texte     | 50     |
+| Ville                                               | Texte     | 50     |
+| Identifiant équipe                                  | Entier    | 10     |
+| Nom de l’équipe                                     | Texte     | 50     |
+| Identifiant de l’équipe parente (affiliation)       | Entier    | 10     |
+| Identifiant championnat                             | Entier    | 10     |
+| Nom du championnat                                  | Texte     | 50     |
+| Pays du championnat                                 | Texte     | 50     |
+| Code pays (optionnel, ISO 3166-1 alpha‑2)           | Texte     | 2      |
+| Identifiant saison                                  | Entier    | 10     |
+| Libellé de la saison (ex. 2023–2024)                | Texte     | 9      |
+| Identifiant stade                                   | Entier    | 10     |
+| Nom du stade                                        | Texte     | 50     |
+| Capacité (nombre de places)                         | Entier    | 6      |
+| Numéro d’adresse du stade                           | Entier    | 10     |
+| Buts (par joueur/équipe/saison)                     | Entier    | 3      |
+| Passes décisives (par joueur/équipe/saison)         | Entier    | 3      |
+| Matches joués (par joueur/équipe/saison)            | Entier    | 3      |
+| Intitulé de distinction (récompense)                | Texte     | 50     |
+| Saison de la distinction (ex. 2023–2024)            | Texte     | 9      |
+| Commentaire libre sur la distinction (optionnel)    | Texte     | 100    |
+
+(Le « Type » est intentionnellement générique pour rester au niveau métier ; par exemple « Entier » peut être implémenté par un INT en base, « Texte » par VARCHAR avec la longueur indiquée ; « Date » par DATE.)
+
+Fin du fichier.
