@@ -1,0 +1,49 @@
+Donne les requêtes d’insertion permettant de remplir la base de données dont le modèle relationnel est le suivant : 
+Championnat = (ID_championnat INT, Nom_championnat_ VARCHAR(50), Pays VARCHAR(50));
+Saison = (ID_saison INT, Annee_saison VARCHAR(50));
+Adresse = (Num_adresse INT, Num_rue INT, Nom_rue VARCHAR(50), Nom_ville VARCHAR(50));
+Agent = (ID_agent INT, Nom_agent VARCHAR(50), Prenom_agent VARCHAR(50), Nationalite_agent VARCHAR(50), Date_naissance_agent DATE, #Num_adresse);
+Stade = (ID_stade INT, Nom_stade VARCHAR(50), Nombre_places INT, #Num_adresse);
+Joueur_ = (ID_joueur INT, Nom_joueur VARCHAR(50), Prenom_joueur VARCHAR(50), Nationalite_footbalistique VARCHAR(50), Date_naissance_joueur_ DATE, #Num_adresse, #ID_agent);
+Equipe = (ID_equipe INT, Nom_equipe VARCHAR(50), #ID_championnat, #ID_saison, #ID_championnat_1, #ID_equipe_Parent*, #ID_stade);
+Jouer = (#ID_joueur, #ID_equipe, #ID_saison, Buts INT, Passes_decisives INT, Matchs INT);
+recompenser = (#ID_joueur, #ID_championnat, distinction VARCHAR(50));
+
+Les clés primaires correspondent aux id, sauf si autre chose est précisé (quand c'est un attribut composé) les clés étrangères sont identifiées par les #, et ont le même nom que les clés primaires auxquelles elles font référence.
+Il doit y avoir : 
+-	5 lignes pour les tables Championnat et Saison, représentant différents championnats nationaux et leurs saisons associées.
+-	30 lignes pour la table Equipe, qui sont des clubs de foot participant aux championnats. Chaque équipe appartient à une saison et un championnat précis.
+-	100 lignes pour la table Joueur, chaque joueur est affilié à une équipe et doit avoir au moins une participation dans la table Jouer.
+-	20 lignes pour la table Agent, chaque agent doit gérer la carrière d’au minimum un joueur.
+-	30 lignes pour la table Stade, chaque stade doit être associé à une équipe.
+-	60 lignes pour la table Adresse représentant les domiciles des joueurs, agents et emplacements de stades.
+-	20 lignes pour la table Récompenser, attribuées à des joueurs en fonction de leurs performances dans les championnats.
+
+Les championnats sont au nombre de 5 dont voici les caractéristiques :
+-	Nom : Ligue 1, Pays : France
+-	Nom : Premier League, Pays : Angleterre
+-	Nom : Serie A, Pays : Italie
+-	Nom : La Liga, Pays : Espagne
+-	Nom : Bundesliga, Pays : Allemagne
+Les distinctions décernées dans la table Récompenser peuvent être, par exemple :
+-	"Meilleur Buteur"
+-	"Meilleur Passeur"
+-	"Joueur de la Saison"
+-	"Révélation de l’Année"
+Les adresses sont réparties dans différentes villes d’Europe : Paris, Londres, Milan, Madrid, Lisbonne, et Berlin.
+
+Les clés étrangères doivent faire référence aux clés primaires existantes : donne les lignes en commençant par remplir les tables dans lesquelles il n'y a pas de clés étrangères, puis les tables dans lesquelles les clés étrangères font références à des clés primaires des tables déjà remplies. 
+
+Les données doivent respecter les contraintes de validation suivantes :
+-	Les numéros de rue doivent être supérieurs à 0
+-	Le nom du pays et le nom du championnat ne peuvent pas être nuls
+-	L’année de la saison doit être comprise entre 1900 et 2025
+-	Le nom, le prénom et la nationalité de l’agent ne peuvent pas être nuls
+-	La date de naissance de l’agent ne doit être inférieur au 1 er janvier 2007
+-	Le nom du stade ne peut pas être nul
+-	Le nom, le prénom et la nationalité du joueur ne peuvent pas être nuls
+-	La date de naissance de l’agent ne doit être inférieur au 1 er janvier 2009
+-	Le nombre de buts, de passes décisives et de matchs joués doivent être positifs ou être égal à 0
+Assure-toi que les noms et prénoms des joueurs et agents font références à des origines variées et sont mixtes, et sont des vrais noms de joueurs et d’agents faisant parties des 5 plus grands championnats dans le monde.
+
+Fournis l'ensemble sous la forme d’un script SQL prêt à être exécuté.
