@@ -145,8 +145,9 @@ JOIN Joueur J2 ON J1.ID_joueur = J2.ID_joueur
 WHERE Buts > (SELECT AVG(Buts) FROM Jouer);
 
 -- 19️⃣ Joueurs appartenant à des équipes ayant plus de 30 buts marqués
-SELECT Nom_joueur, Prenom_joueur
+SELECT Joueur.Nom_joueur, Joueur.Prenom_joueur
 FROM Jouer
+JOIN Joueur on Jouer.ID_joueur = Joueur.ID_joueur 
 WHERE ID_equipe IN (
   SELECT ID_equipe
   FROM Jouer
